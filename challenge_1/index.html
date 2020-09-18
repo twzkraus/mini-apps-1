@@ -12,15 +12,35 @@
         border-color: black;
         border-width: 2px;
       }
+      #score-table {
+        border-style: solid;
+        border-color: black;
+        border-width: 1px;
+      }
     </style>
   </head>
 
   <body>
     <header>Tic Tac Toe</header>
+      <table border="1">
+        <tr>
+          <td colspan="2">
+            Current Scores:
+          </td>
+        </tr>
+        <tr>
+          <td>X</td>
+          <td>O</td>
+        </tr>
+        <tr>
+          <td id="x-win-count">0</td>
+          <td id="o-win-count">0</td>
+        </tr>
+      </table>
     <div id="turn-box"></div>
     <div id="message-box"></div>
     <button id="board-reset">Reset Board</button>
-    <div class="board" id="board" style="height: 300px; display: grid; grid-template-rows: 3;">
+    <div class="board" id="board" style="width: 300px">
       <div class="row row1">
         <div class="box" id="box0"></div>
         <div class="box" id="box1"></div>

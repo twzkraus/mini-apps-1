@@ -15,6 +15,7 @@ for (let i = 0; i < 9; i++) {
 const resetButton = document.getElementById("board-reset");
 const messageBox = document.getElementById("message-box");
 const turnBox = document.getElementById("turn-box");
+const winCounts = [document.getElementById("x-win-count"), document.getElementById("o-win-count")];
 
 /**************
 EVENT HANDLERS
@@ -73,6 +74,7 @@ const isGameOver = () => {
     let k = combo[2];
     if (boardVals[i] && boardVals[i] === boardVals[j] && boardVals[j] === boardVals[k]) {
       turnBox.innerHTML = `Game over. ${players[currentPlayerIdx]} is the winner!`;
+      winCounts[currentPlayerIdx].innerHTML = Number(winCounts[currentPlayerIdx].innerHTML) + 1;
       loser = currentPlayerIdx + 1;
       gameOver = true;
     }
