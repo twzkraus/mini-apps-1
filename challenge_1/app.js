@@ -1,42 +1,67 @@
-let gameOver, currentPlayerIdx, loser;
-const markers = ['X', 'O'];
-// board status
-const boardVals = new Array(9);
-const boardDivs = new Array(9);
+// let gameOver, currentPlayerIdx, loser;
+// const markers = ['X', 'O'];
+// // board status
+// const boardVals = new Array(9);
+// const boardDivs = new Array(9);
 
 /**************
 DOM ELEMENTS
 **************/
-const boardElement = document.getElementById("board");
-for (let i = 0; i < 9; i++) {
-  boardDivs[i] = document.getElementById(`box${i}`);
+// const boardElement = document.getElementById("board");
+// for (let i = 0; i < 9; i++) {
+//   boardDivs[i] = document.getElementById(`box${i}`);
+// }
+// const resetButton = document.getElementById("board-reset");
+// const messageBox = document.getElementById("message-box");
+// const turnBox = document.getElementById("turn-box");
+// const winCounts = [document.getElementById("x-win-count"), document.getElementById("o-win-count")];
+// const playerNames = ['', ''];
+// const players = [markers[0], markers[1]];
+// const scoreboard = document.getElementById("score-table");
+
+const app = {
+  state: {
+    gameOver: null,
+    currentPlayerIdx: null,
+    loser: null,
+    markers: ['X', 'O'],
+    players: ['X', 'O'],
+    playerNames: ['', ''],
+    boardVals: new Array(9),
+  },
+  dom: {
+    board: document.getElementById("board"),
+    boardDivs: new Array(9),
+    resetButton: document.getElementById("board-reset"),
+    messageBox: document.getElementById("message-box"),
+    turnBox: document.getElementById("turn-box"),
+    winCounts: [document.getElementById("x-win-count"), document.getElementById("o-win-count")],
+    scoreboard: document.getElementById("score-table"),
+  }
 }
-const resetButton = document.getElementById("board-reset");
-const messageBox = document.getElementById("message-box");
-const turnBox = document.getElementById("turn-box");
-const winCounts = [document.getElementById("x-win-count"), document.getElementById("o-win-count")];
-const playerNames = ['', ''];
-const players = [markers[0], markers[1]];
-const scoreboard = document.getElementById("score-table");
+
+for (let i = 0; i < 9; i++) {
+  app.dom.boardDivs[i] = document.getElementById(`box${i}`);
+}
 
 /**************
 EVENT HANDLERS
 **************/
 
-boardElement.addEventListener('click', (event) => {
+app.dom.board.addEventListener('click', (event) => {
   let boxNum = event.target.id[event.target.id.length - 1];
   handleBoxClicked(boxNum);
 });
 
-resetButton.addEventListener('click', (event) => {
-  setupNewBoard(loser);
+app.dom.resetButton.addEventListener('click', (event) => {
+  setupNewBoard(app.state.loser);
   render();
 });
 
-scoreboard.addEventListener('change', (event) => {
+app.dom.scoreboard.addEventListener('change', (event) => {
   let idx = event.target.id[event.target.id.length - 1];
-  playerNames[idx] = `<br> (${event.target.value})`;
-  players[idx] = markers[idx] + playerNames[idx];
+  app.state.playerNames[idx] = `<br> (${event.target.value})`;
+  app.state.players[idx] = app.state.markers[idx] + app.state.playerNames[idx];
   forceRefreshTurnBox();
 });
 
@@ -45,27 +70,27 @@ HELPER FUNCTIONS
 **************/
 
 const setupNewBoard = (playerIdxNotStarting = 1) => {
-  boardVals.forEach((boxVal, index) => {
-    boardVals[index] = '';
+  app.state.boardVals.forEach((boxVal, index) => {
+    app.state.boardVals[index] = '';
   });
-  gameOver = false;
-  messageBox.innerHTML = '';
-  currentPlayerIdx = playerIdxNotStarting;
+  app.state.gameOver = false;
+  app.dom.messageBox.innerHTML = '';
+  app.state.currentPlayerIdx = playerIdxNotStarting;
   switchPlayer();
 };
 
-const switchPlayer = (forcedPlayerIdx = currentPlayerIdx) => {
-  currentPlayerIdx = (forcedPlayerIdx + 1) % 2;
-  turnBox.innerHTML = `Now Playing: ${players[currentPlayerIdx]}`;
+const switchPlayer = (forcedPlayerIdx = app.state.currentPlayerIdx) => {
+  app.state.currentPlayerIdx = (forcedPlayerIdx + 1) % 2;
+  app.dom.turnBox.innerHTML = `Now Playing: ${app.state.players[app.state.currentPlayerIdx]}`;
 };
 
 const forceRefreshTurnBox = () => {
-  switchPlayer(currentPlayerIdx + 1);
+  switchPlayer(app.state.currentPlayerIdx + 1);
 }
 
 const render = () => {
-  boardVals.forEach((boxVal, index) => {
-    boardDivs[index].innerHTML = boxVal;
+  app.state.boardVals.forEach((boxVal, index) => {
+    app.dom.boardDivs[index].innerHTML = boxVal;
   });
 };
 
@@ -82,22 +107,23 @@ const isGameOver = () => {
   ];
 
   idxsToCheck.forEach(combo => {
-    let i = combo[0];
-    let j = combo[1];
-    let k = combo[2];
-    if (boardVals[i] && boardVals[i] === boardVals[j] && boardVals[j] === boardVals[k]) {
-      turnBox.innerHTML = `Game over. ${players[currentPlayerIdx]} is the winner!`;
-      winCounts[currentPlayerIdx].innerHTML = Number(winCounts[currentPlayerIdx].innerHTML) + 1;
-      loser = currentPlayerIdx + 1;
-      gameOver = true;
+    let val1 = app.state.boardVals[combo[0]];
+    let val2 = app.state.boardVals[combo[1]];
+    let val3 = app.state.boardVals[combo[2]];
+    if (val1 && val1 === val2 && val2 === val3) {
+      app.dom.turnBox.innerHTML = `Game over. ${app.state.players[app.state.currentPlayerIdx]} is the winner!`;
+      let currentWinCount = Number(app.dom.winCounts[app.state.currentPlayerIdx].innerHTML);
+      app.dom.winCounts[app.state.currentPlayerIdx].innerHTML = currentWinCount + 1;
+      app.state.loser = app.state.currentPlayerIdx + 1;
+      app.state.gameOver = true;
     }
   });
 
-  if (!gameOver && boardVals.join('').length === 9) {
-    messageBox.innerHTML = 'Game over. It\'s a tie.';
-    gameOver = true;
+  if (!app.state.gameOver && app.state.boardVals.join('').length === 9) {
+    app.dom.messageBox.innerHTML = 'Game over. It\'s a tie.';
+    app.state.gameOver = true;
   }
-  return gameOver;
+  return app.state.gameOver;
 };
 
 /**************
@@ -108,19 +134,19 @@ setupNewBoard();
 
 // Game starts when a box is clicked--until then, nothing happens
 const handleBoxClicked = (boxNumber) => {
-  if (!gameOver) {
-    if (!boardVals[boxNumber]) {
-      messageBox.innerHTML = '';
-      boardVals[boxNumber] = players[currentPlayerIdx];
+  if (!app.state.gameOver) {
+    if (!app.state.boardVals[boxNumber]) {
+      app.dom.messageBox.innerHTML = '';
+      app.state.boardVals[boxNumber] = app.state.players[app.state.currentPlayerIdx];
       render();
       if (!isGameOver()) {
         switchPlayer();
       }
     } else {
-      messageBox.innerHTML = 'That space is already taken. Please choose another.';
+      app.dom.messageBox.innerHTML = 'That space is already taken. Please choose another.';
     }
   } else {
-    messageBox.innerHTML = `Click 'Reset Board' to start a new game!`;
+    app.dom.messageBox.innerHTML = `Click 'Reset Board' to start a new game!`;
   }
 }
 
