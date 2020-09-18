@@ -12,25 +12,23 @@
         border-color: black;
         border-width: 2px;
       }
-      #score-table {
-        border-style: solid;
-        border-color: black;
-        border-width: 1px;
+      input {
+        width: 40px;
       }
     </style>
   </head>
 
   <body>
     <header>Tic Tac Toe</header>
-      <table border="1">
+      <table id="score-table" border="1">
         <tr>
           <td colspan="2">
             Current Scores:
           </td>
         </tr>
         <tr>
-          <td>X</td>
-          <td>O</td>
+          <td><input id="name-0" type=text value="X"></td>
+          <td><input id="name-1" type=text value="O"></td>
         </tr>
         <tr>
           <td id="x-win-count">0</td>

@@ -1,6 +1,5 @@
-// current player
-const players = ['X', 'O'];
 let gameOver, currentPlayerIdx, loser;
+const markers = ['X', 'O'];
 // board status
 const boardVals = new Array(9);
 const boardDivs = new Array(9);
@@ -16,6 +15,9 @@ const resetButton = document.getElementById("board-reset");
 const messageBox = document.getElementById("message-box");
 const turnBox = document.getElementById("turn-box");
 const winCounts = [document.getElementById("x-win-count"), document.getElementById("o-win-count")];
+const playerNames = ['', ''];
+const players = [markers[0], markers[1]];
+const scoreboard = document.getElementById("score-table");
 
 /**************
 EVENT HANDLERS
@@ -29,6 +31,13 @@ boardElement.addEventListener('click', (event) => {
 resetButton.addEventListener('click', (event) => {
   setupNewBoard(loser);
   render();
+});
+
+scoreboard.addEventListener('change', (event) => {
+  let idx = event.target.id[event.target.id.length - 1];
+  playerNames[idx] = `<br> (${event.target.value})`;
+  players[idx] = markers[idx] + playerNames[idx];
+  forceRefreshTurnBox();
 });
 
 /**************
@@ -45,10 +54,14 @@ const setupNewBoard = (playerIdxNotStarting = 1) => {
   switchPlayer();
 };
 
-const switchPlayer = () => {
-  currentPlayerIdx = (currentPlayerIdx + 1) % 2;
+const switchPlayer = (forcedPlayerIdx = currentPlayerIdx) => {
+  currentPlayerIdx = (forcedPlayerIdx + 1) % 2;
   turnBox.innerHTML = `Now Playing: ${players[currentPlayerIdx]}`;
 };
+
+const forceRefreshTurnBox = () => {
+  switchPlayer(currentPlayerIdx + 1);
+}
 
 const render = () => {
   boardVals.forEach((boxVal, index) => {
