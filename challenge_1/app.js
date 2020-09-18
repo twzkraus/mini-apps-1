@@ -1,6 +1,6 @@
 // current player
 const players = ['X', 'O'];
-let gameOver, currentPlayerIdx;
+let gameOver, currentPlayerIdx, loser;
 // board status
 const boardVals = new Array(9);
 const boardDivs = new Array(9);
@@ -26,7 +26,7 @@ boardElement.addEventListener('click', (event) => {
 });
 
 resetButton.addEventListener('click', (event) => {
-  setupNewBoard();
+  setupNewBoard(loser);
   render();
 });
 
@@ -34,13 +34,13 @@ resetButton.addEventListener('click', (event) => {
 HELPER FUNCTIONS
 **************/
 
-const setupNewBoard = () => {
+const setupNewBoard = (playerIdxNotStarting = 1) => {
   boardVals.forEach((boxVal, index) => {
     boardVals[index] = '';
   });
   gameOver = false;
   messageBox.innerHTML = '';
-  currentPlayerIdx = -1;
+  currentPlayerIdx = playerIdxNotStarting;
   switchPlayer();
 };
 
@@ -72,7 +72,8 @@ const isGameOver = () => {
     let j = combo[1];
     let k = combo[2];
     if (boardVals[i] && boardVals[i] === boardVals[j] && boardVals[j] === boardVals[k]) {
-      turnBox.innerHTML = `Game over. ${players[currentPlayerIdx]} is the winner!`
+      turnBox.innerHTML = `Game over. ${players[currentPlayerIdx]} is the winner!`;
+      loser = currentPlayerIdx + 1;
       gameOver = true;
     }
   });
