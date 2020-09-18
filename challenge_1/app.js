@@ -1,56 +1,61 @@
 // current player
 const players = ['X', 'O'];
-let currentPlayerIdx = 0;
+let gameOver, currentPlayerIdx;
 // board status
-const boardVals = ['', '', '', '', '', '', '', '', ''];
+const boardVals = new Array(9);
 const boardDivs = new Array(9);
-// game-over
-let gameOver = false;
 
+/**************
+DOM ELEMENTS
+**************/
 const boardElement = document.getElementById("board");
 for (let i = 0; i < 9; i++) {
   boardDivs[i] = document.getElementById(`box${i}`);
 }
 const resetButton = document.getElementById("board-reset");
+const messageBox = document.getElementById("message-box");
+const turnBox = document.getElementById("turn-box");
 
-// high level:
-  // while !gameOver
-  // render board
-  // alternate turns for X and O
-    // click handlers need to be in place
-    // check whether gameOver
 /**************
-HELPER FUNCTIONS
+EVENT HANDLERS
 **************/
 
-// click handler for Tic Tac Toe Boxes
 boardElement.addEventListener('click', (event) => {
   let boxNum = event.target.id[event.target.id.length - 1];
   handleBoxClicked(boxNum);
 });
 
 resetButton.addEventListener('click', (event) => {
-  boardVals.forEach((boxVal, index) => {
-    boardVals[index] = '';
-  });
+  setupNewBoard();
   render();
 });
 
-// render
-render = () => {
-  // loop over board array, make it match the html
+/**************
+HELPER FUNCTIONS
+**************/
+
+const setupNewBoard = () => {
   boardVals.forEach((boxVal, index) => {
-    if (boxVal) {
-      // render on the dom
-      boardDivs[index].innerHTML = boxVal;
-    } else {
-      boardDivs[index].innerHTML = '';
-    }
+    boardVals[index] = '';
+  });
+  gameOver = false;
+  messageBox.innerHTML = '';
+  currentPlayerIdx = -1;
+  switchPlayer();
+};
+
+const switchPlayer = () => {
+  currentPlayerIdx = (currentPlayerIdx + 1) % 2;
+  turnBox.innerHTML = `Now Playing: ${players[currentPlayerIdx]}`;
+};
+
+const render = () => {
+  boardVals.forEach((boxVal, index) => {
+    boardDivs[index].innerHTML = boxVal;
   });
 };
 
-// checkIfGameOver
-checkIfGameOver = () => {
+const isGameOver = () => {
   let idxsToCheck = [
     [0, 1, 2],
     [3, 4, 5],
@@ -67,25 +72,40 @@ checkIfGameOver = () => {
     let j = combo[1];
     let k = combo[2];
     if (boardVals[i] && boardVals[i] === boardVals[j] && boardVals[j] === boardVals[k]) {
-      console.log('game over!');
+      turnBox.innerHTML = `Game over. ${players[currentPlayerIdx]} is the winner!`
       gameOver = true;
     }
   });
+
+  if (!gameOver && boardVals.join('').length === 9) {
+    messageBox.innerHTML = 'Game over. It\'s a tie.';
+    gameOver = true;
+  }
+  return gameOver;
 };
 
 /**************
  MAIN GAMEPLAY
- **************/
+**************/
 
- // gameplay handler of box clicked
-handleBoxClicked = (boxNumber) => {
-  if (!boardVals[boxNumber]) {
-    boardVals[boxNumber] = players[currentPlayerIdx];
-    render();
-    checkIfGameOver();
-    currentPlayerIdx = (currentPlayerIdx + 1) % 2;
+setupNewBoard();
+
+// Game starts when a box is clicked--until then, nothing happens
+const handleBoxClicked = (boxNumber) => {
+  if (!gameOver) {
+    if (!boardVals[boxNumber]) {
+      messageBox.innerHTML = '';
+      boardVals[boxNumber] = players[currentPlayerIdx];
+      render();
+      if (!isGameOver()) {
+        switchPlayer();
+      }
+    } else {
+      messageBox.innerHTML = 'That space is already taken. Please choose another.';
+    }
+  } else {
+    messageBox.innerHTML = `Click 'Reset Board' to start a new game!`;
   }
-  // possible improvement: add an else and message of 'please select a new box'
 }
 
 
