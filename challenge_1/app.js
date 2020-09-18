@@ -2,7 +2,7 @@
 const players = ['X', 'O'];
 let currentPlayerIdx = 0;
 // board status
-const board = ['', '', '', '', '', '', '', '', ''];
+const boardVals = ['', '', '', '', '', '', '', '', ''];
 const boardDivs = new Array(9);
 // game-over
 let gameOver = false;
@@ -11,6 +11,7 @@ const boardElement = document.getElementById("board");
 for (let i = 0; i < 9; i++) {
   boardDivs[i] = document.getElementById(`box${i}`);
 }
+const resetButton = document.getElementById("board-reset");
 
 // high level:
   // while !gameOver
@@ -21,34 +22,33 @@ for (let i = 0; i < 9; i++) {
 /**************
 HELPER FUNCTIONS
 **************/
-// click handler
+
+// click handler for Tic Tac Toe Boxes
 boardElement.addEventListener('click', (event) => {
-  // note: use "path" on event to figure out which element was clicked
-  // debugger;
   let boxNum = event.target.id[event.target.id.length - 1];
   handleBoxClicked(boxNum);
 });
 
-// gameplay handler of box clicked
-handleBoxClicked = (boxNumber) => {
-  if (!board[boxNumber]) {
-    board[boxNumber] = players[currentPlayerIdx];
-    render();
-    checkIfGameOver();
-    currentPlayerIdx = (currentPlayerIdx + 1) % 2;
-  }
-  // possible improvement: add an else and message of 'please select a new box'
-}
+resetButton.addEventListener('click', (event) => {
+  boardVals.forEach((boxVal, index) => {
+    boardVals[index] = '';
+  });
+  render();
+});
+
 // render
 render = () => {
   // loop over board array, make it match the html
-  board.forEach((boxVal, index) => {
+  boardVals.forEach((boxVal, index) => {
     if (boxVal) {
       // render on the dom
       boardDivs[index].innerHTML = boxVal;
+    } else {
+      boardDivs[index].innerHTML = '';
     }
   });
 };
+
 // checkIfGameOver
 checkIfGameOver = () => {
   let idxsToCheck = [
@@ -66,7 +66,7 @@ checkIfGameOver = () => {
     let i = combo[0];
     let j = combo[1];
     let k = combo[2];
-    if (board[i] && board[i] === board[j] && board[j] === board[k]) {
+    if (boardVals[i] && boardVals[i] === boardVals[j] && boardVals[j] === boardVals[k]) {
       console.log('game over!');
       gameOver = true;
     }
@@ -74,9 +74,19 @@ checkIfGameOver = () => {
 };
 
 /**************
-MAIN GAMEPLAY
-**************/
+ MAIN GAMEPLAY
+ **************/
 
+ // gameplay handler of box clicked
+handleBoxClicked = (boxNumber) => {
+  if (!boardVals[boxNumber]) {
+    boardVals[boxNumber] = players[currentPlayerIdx];
+    render();
+    checkIfGameOver();
+    currentPlayerIdx = (currentPlayerIdx + 1) % 2;
+  }
+  // possible improvement: add an else and message of 'please select a new box'
+}
 
 
 
