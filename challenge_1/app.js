@@ -20,10 +20,6 @@ const app = {
   func: {},
 }
 
-for (let i = 0; i < 9; i++) {
-  app.dom.boardDivs[i] = document.getElementById(`box${i}`);
-}
-
 /**************
 EVENT HANDLERS
 **************/
@@ -50,6 +46,26 @@ app.dom.scoreboard.addEventListener('change', (event) => {
 /**************
 HELPER FUNCTIONS
 **************/
+
+app.func.buildBoard = () => {
+  for (let i = 0; i < 3; i++) {
+    let thisRow = document.createElement('div');
+    // thisRow.setAttribute('class', 'row');
+    thisRow.setAttribute('class', `row row${i}`);
+    for (let j = 0; j < 3; j++) {
+      let thisBox = document.createElement('div');
+      thisBox.setAttribute('class', 'box');
+      thisBox.setAttribute('id', `box${i * 3 + j}`);
+      thisRow.appendChild(thisBox);
+    }
+    app.dom.board.appendChild(thisRow);
+  }
+
+  // save them in boardDivs
+  for (let i = 0; i < 9; i++) {
+    app.dom.boardDivs[i] = document.getElementById(`box${i}`);
+  }
+}
 
 app.func.setupNewBoard = (playerIdxNotStarting = 1) => {
   app.state.boardVals.forEach((boxVal, index) => {
@@ -117,6 +133,8 @@ app.func.isGameOver = () => {
 /**************
  MAIN GAMEPLAY
 **************/
+
+app.func.buildBoard();
 
 app.func.setupNewBoard();
 
