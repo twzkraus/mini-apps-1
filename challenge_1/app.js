@@ -1,24 +1,3 @@
-// let gameOver, currentPlayerIdx, loser;
-// const markers = ['X', 'O'];
-// // board status
-// const boardVals = new Array(9);
-// const boardDivs = new Array(9);
-
-/**************
-DOM ELEMENTS
-**************/
-// const boardElement = document.getElementById("board");
-// for (let i = 0; i < 9; i++) {
-//   boardDivs[i] = document.getElementById(`box${i}`);
-// }
-// const resetButton = document.getElementById("board-reset");
-// const messageBox = document.getElementById("message-box");
-// const turnBox = document.getElementById("turn-box");
-// const winCounts = [document.getElementById("x-win-count"), document.getElementById("o-win-count")];
-// const playerNames = ['', ''];
-// const players = [markers[0], markers[1]];
-// const scoreboard = document.getElementById("score-table");
-
 const app = {
   state: {
     gameOver: null,
@@ -60,9 +39,11 @@ app.dom.resetButton.addEventListener('click', (event) => {
 
 app.dom.scoreboard.addEventListener('change', (event) => {
   let idx = event.target.id[event.target.id.length - 1];
+  let oldName = app.state.players[idx];
   app.state.playerNames[idx] = `<br> (${event.target.value})`;
-  app.state.players[idx] = app.state.markers[idx] + app.state.playerNames[idx];
-  forceRefreshTurnBox();
+  let newName = app.state.markers[idx] + app.state.playerNames[idx];
+  app.state.players[idx] = newName;
+  putNewNameInTurnBox(oldName, newName);
 });
 
 /**************
@@ -84,8 +65,14 @@ const switchPlayer = (forcedPlayerIdx = app.state.currentPlayerIdx) => {
   app.dom.turnBox.innerHTML = `Now Playing: ${app.state.players[app.state.currentPlayerIdx]}`;
 };
 
-const forceRefreshTurnBox = () => {
-  switchPlayer(app.state.currentPlayerIdx + 1);
+const putNewNameInTurnBox = (oldName, newName) => {
+  let oldTurnBox = app.dom.turnBox.innerHTML;
+  let idxOfOldName = oldTurnBox.indexOf(oldName);
+  if (idxOfOldName >= 0) {
+    let beforeText = oldTurnBox.slice(0, idxOfOldName);
+    let afterText = oldTurnBox.slice(idxOfOldName + oldName.length);
+    app.dom.turnBox.innerHTML = beforeText + newName + afterText;
+  }
 }
 
 const render = () => {
