@@ -16,7 +16,8 @@ const app = {
     turnBox: document.getElementById("turn-box"),
     winCounts: [document.getElementById("x-win-count"), document.getElementById("o-win-count")],
     scoreboard: document.getElementById("score-table"),
-  }
+  },
+  func: {},
 }
 
 for (let i = 0; i < 9; i++) {
@@ -29,12 +30,12 @@ EVENT HANDLERS
 
 app.dom.board.addEventListener('click', (event) => {
   let boxNum = event.target.id[event.target.id.length - 1];
-  handleBoxClicked(boxNum);
+  app.func.handleBoxClicked(boxNum);
 });
 
 app.dom.resetButton.addEventListener('click', (event) => {
-  setupNewBoard(app.state.loser);
-  render();
+  app.func.setupNewBoard(app.state.loser);
+  app.func.render();
 });
 
 app.dom.scoreboard.addEventListener('change', (event) => {
@@ -43,29 +44,29 @@ app.dom.scoreboard.addEventListener('change', (event) => {
   app.state.playerNames[idx] = `<br> (${event.target.value})`;
   let newName = app.state.markers[idx] + app.state.playerNames[idx];
   app.state.players[idx] = newName;
-  putNewNameInTurnBox(oldName, newName);
+  app.func.putNewNameInTurnBox(oldName, newName);
 });
 
 /**************
 HELPER FUNCTIONS
 **************/
 
-const setupNewBoard = (playerIdxNotStarting = 1) => {
+app.func.setupNewBoard = (playerIdxNotStarting = 1) => {
   app.state.boardVals.forEach((boxVal, index) => {
     app.state.boardVals[index] = '';
   });
   app.state.gameOver = false;
   app.dom.messageBox.innerHTML = '';
   app.state.currentPlayerIdx = playerIdxNotStarting;
-  switchPlayer();
+  app.func.switchPlayer();
 };
 
-const switchPlayer = (forcedPlayerIdx = app.state.currentPlayerIdx) => {
+app.func.switchPlayer = (forcedPlayerIdx = app.state.currentPlayerIdx) => {
   app.state.currentPlayerIdx = (forcedPlayerIdx + 1) % 2;
   app.dom.turnBox.innerHTML = `Now Playing: ${app.state.players[app.state.currentPlayerIdx]}`;
 };
 
-const putNewNameInTurnBox = (oldName, newName) => {
+app.func.putNewNameInTurnBox = (oldName, newName) => {
   let oldTurnBox = app.dom.turnBox.innerHTML;
   let idxOfOldName = oldTurnBox.indexOf(oldName);
   if (idxOfOldName >= 0) {
@@ -75,13 +76,13 @@ const putNewNameInTurnBox = (oldName, newName) => {
   }
 }
 
-const render = () => {
+app.func.render = () => {
   app.state.boardVals.forEach((boxVal, index) => {
     app.dom.boardDivs[index].innerHTML = boxVal;
   });
 };
 
-const isGameOver = () => {
+app.func.isGameOver = () => {
   let idxsToCheck = [
     [0, 1, 2],
     [3, 4, 5],
@@ -117,17 +118,17 @@ const isGameOver = () => {
  MAIN GAMEPLAY
 **************/
 
-setupNewBoard();
+app.func.setupNewBoard();
 
 // Game starts when a box is clicked--until then, nothing happens
-const handleBoxClicked = (boxNumber) => {
+app.func.handleBoxClicked = (boxNumber) => {
   if (!app.state.gameOver) {
     if (!app.state.boardVals[boxNumber]) {
       app.dom.messageBox.innerHTML = '';
       app.state.boardVals[boxNumber] = app.state.players[app.state.currentPlayerIdx];
-      render();
-      if (!isGameOver()) {
-        switchPlayer();
+      app.func.render();
+      if (!app.func.isGameOver()) {
+        app.func.switchPlayer();
       }
     } else {
       app.dom.messageBox.innerHTML = 'That space is already taken. Please choose another.';
