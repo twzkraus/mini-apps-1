@@ -1,19 +1,34 @@
 body {
   font-family: sans-serif;
 }
+
 .row {
   display: flex;
 }
+
 .box {
-  display: flex;
+  display: grid;
   border-style: solid;
   height: 100px;
   width: 100px;
   border-color: black;
   border-width: 2px;
-  align-items: center;
-  justify-content: center;
 }
+
 input {
   width: 40px;
+}
+
+.marker {
+  grid-row-start: 2;
+  grid-row-end: 3;
+  justify-self: center;
+  color: red;
+  font-size: 50px;
+}
+
+.name-box {
+  grid-row-start: 3;
+  grid-row-end: 4;
+  justify-self: center;
 }

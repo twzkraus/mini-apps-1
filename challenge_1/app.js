@@ -58,9 +58,11 @@ app.func.buildBoard = () => {
       thisBox.setAttribute('class', 'box');
       thisBox.setAttribute('id', `box${i * 3 + j}`);
       let thisMarker = document.createElement('div');
+      thisMarker.setAttribute('class', 'marker');
       thisMarker.setAttribute('id', `marker${i * 3 + j}`);
       let thisNameBox = document.createElement('div');
       thisNameBox.setAttribute('class', 'name-box');
+      thisNameBox.setAttribute('id', `name-box${i * 3 + j}`);
       thisBox.appendChild(thisMarker);
       thisBox.appendChild(thisNameBox);
       thisRow.appendChild(thisBox);
@@ -132,7 +134,11 @@ app.func.isGameOver = () => {
     let val2 = app.state.markerVals[combo[1]];
     let val3 = app.state.markerVals[combo[2]];
     if (val1 && val1 === val2 && val2 === val3) {
-      app.dom.turnBox.innerHTML = `Game over. ${app.state.players[app.state.currentPlayerIdx]} is the winner!`;
+      if (app.state.players[app.state.currentPlayerIdx]) {
+        app.dom.turnBox.innerHTML = `Game over. ${app.state.players[app.state.currentPlayerIdx]} is the winner!`;
+      } else {
+        app.dom.turnBox.innerHTML = `Game over. ${app.state.markers[app.state.currentPlayerIdx]} is the winner!`;
+      }
       let currentWinCount = Number(app.dom.winCounts[app.state.currentPlayerIdx].innerHTML);
       app.dom.winCounts[app.state.currentPlayerIdx].innerHTML = currentWinCount + 1;
       app.state.loser = app.state.currentPlayerIdx + 1;
