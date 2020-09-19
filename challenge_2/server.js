@@ -14,13 +14,8 @@ app.listen(PORT, () => {
 });
 
 app.post('/add_data', (req, res) => {
-  debugger;
   console.log(`Request of type ${req.method} was received to url ${req.url}`);
-  if (req.body.fileInput) {
-    dataServed = parseJSONToCSV(JSON.parse(req.body.fileInput));
-  } else {
-    dataServed = parseJSONToCSV(JSON.parse(req.body.textfield));
-  }
+  dataServed = parseJSONToCSV(JSON.parse(req.body.textfield));
 
   res.format({
     html: () => {
@@ -70,7 +65,7 @@ const addCSVtoHTML = (csvData) => {
     <h1>JSON-CSV Converter</h1>
     <nav><a href="/">Home</a></nav>
     <div>
-      ${csvData}
+      ${csvData.split('\n').join('<br>')}
     </div>
     <form method="post" action="/add_data">
       <textarea rows="10" name="textfield"></textarea>
