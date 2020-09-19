@@ -12,8 +12,33 @@ app.listen(PORT, () => {
 });
 
 app.post('/add_data', (req, res) => {
-  console.log(req.body);
-  debugger;
   console.log(`Request of type ${req.method} was received to url ${req.url}`);
-  res.send(200);
+  res.send(parseJSONToCSV(JSON.parse(req.body.textfield)));
 });
+
+parseJSONToCSV = (obj) => {
+  let headersArr = [];
+  for (let key in obj) {
+    if (key !== 'children') {
+      headersArr.push(key);
+    }
+  }
+  debugger;
+  return headersArr.join(',') + '\n' + parseSingleRow(obj);
+};
+
+parseSingleRow = (obj) => {
+  let thisRowArr = [];
+  let nextRow = '';
+  for (let key in obj) {
+    if (key !== 'children') {
+      thisRowArr.push(obj[key]);
+    }
+  }
+
+  obj.children.forEach(child => {
+    nextRow += '\n' + parseSingleRow(child);
+  });
+
+  return thisRowArr.join(',') + nextRow;
+}

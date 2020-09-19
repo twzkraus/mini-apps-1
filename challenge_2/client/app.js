@@ -22,17 +22,11 @@ form.setAttribute('method', 'post');
 form.setAttribute('action', '/add_data');
 
 let textInput = document.createElement('textarea');
-// textInput.setAttribute('type', 'text');
-// textInput.setAttribute('id', 'json-input');
 textInput.setAttribute('name', 'textfield');
 textInput.setAttribute('value', 'default text');
-// let textArea = document.createElement('textarea');
-// textArea.setAttribute('value', 'default text');
-// textInput.appendChild(textArea);
 
 let button = document.createElement('input');
 button.setAttribute('type', 'submit');
-// button.setAttribute('name', 'submit');
 button.setAttribute('value', 'Submit');
 
 form.appendChild(textInput);
