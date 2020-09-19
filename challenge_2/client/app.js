@@ -13,10 +13,13 @@ const form = document.createElement('form');
 let textinput = document.createElement('textarea');
 let button = document.createElement('input');
 button.setAttribute('type', 'submit');
-form.setAttribute('action', '/api/data');
 
 form.appendChild(textinput);
 form.appendChild(button);
+
+form.setAttribute('action', '/api/data');
+form.setAttribute('method', 'POST');
+
 body.appendChild(form);
 
 
