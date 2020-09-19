@@ -1,0 +1,19 @@
+body {
+  font-family: sans-serif;
+}
+.row {
+  display: flex;
+}
+.box {
+  display: flex;
+  border-style: solid;
+  height: 100px;
+  width: 100px;
+  border-color: black;
+  border-width: 2px;
+  align-items: center;
+  justify-content: center;
+}
+input {
+  width: 40px;
+}

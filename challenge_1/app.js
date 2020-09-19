@@ -6,7 +6,7 @@ const app = {
     markers: ['X', 'O'],
     players: ['X', 'O'],
     playerNames: ['', ''],
-    boardVals: new Array(9),
+    boardVals: new Array(9).fill(''),
   },
   dom: {
     board: document.getElementById("board"),
@@ -40,7 +40,7 @@ app.dom.scoreboard.addEventListener('change', (event) => {
   app.state.playerNames[idx] = `<br> (${event.target.value})`;
   let newName = app.state.markers[idx] + app.state.playerNames[idx];
   app.state.players[idx] = newName;
-  app.func.putNewNameInTurnBox(oldName, newName);
+  app.func.handleNewName(oldName, newName);
 });
 
 /**************
@@ -82,7 +82,7 @@ app.func.switchPlayer = (forcedPlayerIdx = app.state.currentPlayerIdx) => {
   app.dom.turnBox.innerHTML = `Now Playing: ${app.state.players[app.state.currentPlayerIdx]}`;
 };
 
-app.func.putNewNameInTurnBox = (oldName, newName) => {
+app.func.handleNewName = (oldName, newName) => {
   let oldTurnBox = app.dom.turnBox.innerHTML;
   let idxOfOldName = oldTurnBox.indexOf(oldName);
   if (idxOfOldName >= 0) {
@@ -90,6 +90,13 @@ app.func.putNewNameInTurnBox = (oldName, newName) => {
     let afterText = oldTurnBox.slice(idxOfOldName + oldName.length);
     app.dom.turnBox.innerHTML = beforeText + newName + afterText;
   }
+  // debugger;
+  app.state.boardVals.forEach((val, index) => {
+    if (val === oldName) {
+      app.state.boardVals[index] = newName;
+    }
+  });
+  app.func.render();
 }
 
 app.func.render = () => {
