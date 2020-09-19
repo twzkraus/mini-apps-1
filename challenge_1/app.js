@@ -4,9 +4,10 @@ const app = {
     currentPlayerIdx: null,
     loser: null,
     markers: ['X', 'O'],
-    players: ['X', 'O'],
+    players: ['', ''],
     playerNames: ['', ''],
-    boardVals: new Array(9).fill(''),
+    markerVals: new Array(9).fill(''),
+    nameVals: new Array(9).fill(''),
   },
   dom: {
     board: document.getElementById("board"),
@@ -36,11 +37,11 @@ app.dom.resetButton.addEventListener('click', (event) => {
 
 app.dom.scoreboard.addEventListener('change', (event) => {
   let idx = event.target.id[event.target.id.length - 1];
-  let oldName = app.state.players[idx];
-  app.state.playerNames[idx] = `<br> (${event.target.value})`;
-  let newName = app.state.markers[idx] + app.state.playerNames[idx];
+  // let oldName = app.state.players[idx];
+  app.state.playerNames[idx] = event.target.value;
+  let newName = app.state.playerNames[idx];
   app.state.players[idx] = newName;
-  app.func.handleNewName(oldName, newName);
+  app.func.handleNewName(idx, newName);
 });
 
 /**************
@@ -56,6 +57,12 @@ app.func.buildBoard = () => {
       let thisBox = document.createElement('div');
       thisBox.setAttribute('class', 'box');
       thisBox.setAttribute('id', `box${i * 3 + j}`);
+      let thisMarker = document.createElement('div');
+      thisMarker.setAttribute('id', `marker${i * 3 + j}`);
+      let thisNameBox = document.createElement('div');
+      thisNameBox.setAttribute('class', 'name-box');
+      thisBox.appendChild(thisMarker);
+      thisBox.appendChild(thisNameBox);
       thisRow.appendChild(thisBox);
     }
     app.dom.board.appendChild(thisRow);
@@ -68,8 +75,9 @@ app.func.buildBoard = () => {
 }
 
 app.func.setupNewBoard = (playerIdxNotStarting = 1) => {
-  app.state.boardVals.forEach((boxVal, index) => {
-    app.state.boardVals[index] = '';
+  app.state.markerVals.forEach((markerVal, index) => {
+    app.state.markerVals[index] = '';
+    app.state.nameVals[index] = '';
   });
   app.state.gameOver = false;
   app.dom.messageBox.innerHTML = '';
@@ -79,29 +87,31 @@ app.func.setupNewBoard = (playerIdxNotStarting = 1) => {
 
 app.func.switchPlayer = (forcedPlayerIdx = app.state.currentPlayerIdx) => {
   app.state.currentPlayerIdx = (forcedPlayerIdx + 1) % 2;
-  app.dom.turnBox.innerHTML = `Now Playing: ${app.state.players[app.state.currentPlayerIdx]}`;
+  app.dom.turnBox.innerHTML = app.state.players[app.state.currentPlayerIdx] ?
+  `Now Playing: ${app.state.players[app.state.currentPlayerIdx]}` :
+  `Now Playing: ${app.state.markers[app.state.currentPlayerIdx]}`;
 };
 
-app.func.handleNewName = (oldName, newName) => {
+app.func.handleNewName = (playerIndex, newName) => {
   let oldTurnBox = app.dom.turnBox.innerHTML;
-  let idxOfOldName = oldTurnBox.indexOf(oldName);
-  if (idxOfOldName >= 0) {
-    let beforeText = oldTurnBox.slice(0, idxOfOldName);
-    let afterText = oldTurnBox.slice(idxOfOldName + oldName.length);
+  let idxOfMarker = oldTurnBox.indexOf(app.state.markers[playerIndex]);
+  if (idxOfMarker >= 0) {
+    let beforeText = oldTurnBox.slice(0, idxOfMarker);
+    let afterText = oldTurnBox.slice(idxOfMarker + 1);
     app.dom.turnBox.innerHTML = beforeText + newName + afterText;
   }
-  // debugger;
-  app.state.boardVals.forEach((val, index) => {
-    if (val === oldName) {
-      app.state.boardVals[index] = newName;
+  app.state.nameVals.forEach((val, index) => {
+    if (app.state.markerVals[index] === app.state.markers[playerIndex]) {
+      app.state.nameVals[index] = newName;
     }
   });
   app.func.render();
 }
 
 app.func.render = () => {
-  app.state.boardVals.forEach((boxVal, index) => {
-    app.dom.boardDivs[index].innerHTML = boxVal;
+  app.state.markerVals.forEach((boxVal, index) => {
+    app.dom.boardDivs[index].firstElementChild.innerHTML = boxVal;
+    app.dom.boardDivs[index].lastElementChild.innerHTML = app.state.nameVals[index];
   });
 };
 
@@ -118,9 +128,9 @@ app.func.isGameOver = () => {
   ];
 
   idxsToCheck.forEach(combo => {
-    let val1 = app.state.boardVals[combo[0]];
-    let val2 = app.state.boardVals[combo[1]];
-    let val3 = app.state.boardVals[combo[2]];
+    let val1 = app.state.markerVals[combo[0]];
+    let val2 = app.state.markerVals[combo[1]];
+    let val3 = app.state.markerVals[combo[2]];
     if (val1 && val1 === val2 && val2 === val3) {
       app.dom.turnBox.innerHTML = `Game over. ${app.state.players[app.state.currentPlayerIdx]} is the winner!`;
       let currentWinCount = Number(app.dom.winCounts[app.state.currentPlayerIdx].innerHTML);
@@ -130,7 +140,7 @@ app.func.isGameOver = () => {
     }
   });
 
-  if (!app.state.gameOver && app.state.boardVals.join('').length === 9) {
+  if (!app.state.gameOver && app.state.markerVals.join('').length === 9) {
     app.dom.messageBox.innerHTML = 'Game over. It\'s a tie.';
     app.state.gameOver = true;
   }
@@ -148,9 +158,10 @@ app.func.setupNewBoard();
 // Game starts when a box is clicked--until then, nothing happens
 app.func.handleBoxClicked = (boxNumber) => {
   if (!app.state.gameOver) {
-    if (!app.state.boardVals[boxNumber]) {
+    if (!app.state.markerVals[boxNumber]) {
       app.dom.messageBox.innerHTML = '';
-      app.state.boardVals[boxNumber] = app.state.players[app.state.currentPlayerIdx];
+      app.state.markerVals[boxNumber] = app.state.markers[app.state.currentPlayerIdx];
+      app.state.nameVals[boxNumber] = app.state.players[app.state.currentPlayerIdx];
       app.func.render();
       if (!app.func.isGameOver()) {
         app.func.switchPlayer();
