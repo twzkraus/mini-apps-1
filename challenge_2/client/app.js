@@ -4,53 +4,6 @@
     // textarea
     // submitButton
   // display area?
-const sampleJSON = {
-  "firstName": "Joshie",
-  "lastName": "Wyattson",
-  "county": "San Mateo",
-  "city": "San Mateo",
-  "role": "Broker",
-  "sales": 1000000,
-  "children": [
-  {
-    "firstName": "Beth Jr.",
-    "lastName": "Johnson",
-    "county": "San Mateo",
-    "city": "Pacifica",
-    "role": "Manager",
-    "sales": 2900000,
-    "children": [
-      {
-        "firstName": "Smitty",
-        "lastName": "Won",
-        "county": "San Mateo",
-        "city": "Redwood City",
-        "role": "Sales Person",
-        "sales": 4800000,
-        "children": []
-      },
-      {
-        "firstName": "Allen",
-        "lastName": "Price",
-        "county": "San Mateo",
-        "city": "Burlingame",
-        "role": "Sales Person",
-        "sales": 2500000,
-        "children": []
-      }
-    ]
-  },
-  {
-    "firstName": "Beth",
-    "lastName": "Johnson",
-    "county": "San Francisco",
-    "city": "San Francisco",
-    "role": "Broker/Sales Person",
-    "sales": 7500000,
-    "children": []
-  }
-]
-};
 
 const body = document.body;
 const pageTitle = document.createElement('h1');
@@ -71,14 +24,18 @@ form.setAttribute('action', '/add_data');
 
 let textInput = document.createElement('textarea');
 textInput.setAttribute('name', 'textfield');
-// textInput.setAttribute('value', JSON.stringify(sampleJSON));
-textInput.innerHTML = JSON.stringify(sampleJSON);
+textInput.setAttribute('rows', '10');
+
+let fileInput = document.createElement('input');
+fileInput.setAttribute('type', 'file');
+fileInput.setAttribute('name', 'fileInput');
 
 let submitButton = document.createElement('input');
 submitButton.setAttribute('type', 'submit');
 submitButton.setAttribute('value', 'Submit');
 
 form.appendChild(textInput);
+form.appendChild(fileInput);
 form.appendChild(submitButton);
 
 body.appendChild(form);
@@ -86,6 +43,18 @@ body.appendChild(form);
 
 
 // set up event listeners
+
+fileInput.addEventListener('change', (event) => {
+  let file = fileInput.files[0];
+  if (file) {
+    let fileReader = new FileReader();
+    fileReader.readAsText(file, "UTF-8");
+    fileReader.onload = (fileLoadedEvent) => {
+      let textFromFile = fileLoadedEvent.target.result;
+      textInput.innerHTML = textFromFile;
+    };
+  }
+});
 
 // submitButton.addEventListener('click', (event) => {
 //   // so user is not redirected
