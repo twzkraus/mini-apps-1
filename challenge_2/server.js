@@ -17,11 +17,16 @@ app.post('/add_data', (req, res) => {
   console.log(`Request of type ${req.method} was received to url ${req.url}`);
   dataServed = parseJSONToCSV(JSON.parse(req.body.textfield));
 
-  res.format({
-    html: () => {
-      res.send(addCSVtoHTML(dataServed));
-    },
-  });
+  // req.body.ajax is a property added if the request is sent as AJAX and not with default html stuff
+  if (req.body.ajax) {
+    res.send(dataServed.split('\n').join('<br>'));
+  } else {
+    res.format({
+      html: () => {
+        res.send(addCSVtoHTML(dataServed));
+      },
+    });
+  }
 });
 
 app.get('/add_data', (req, res) => {
@@ -58,7 +63,7 @@ const addCSVtoHTML = (csvData) => {
   return `<!DOCTYPE html>
 <html>
   <head>
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   </head>
 
   <body>
@@ -71,6 +76,6 @@ const addCSVtoHTML = (csvData) => {
       <textarea rows="10" name="textfield"></textarea>
       <input type="submit" value="Submit"></input>
     </form>
-
+  </body>
 </html>`
 };
