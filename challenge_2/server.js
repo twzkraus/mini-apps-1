@@ -30,8 +30,8 @@ app.post('/add_data', (req, res) => {
 });
 
 app.get('/add_data', (req, res) => {
-  res.sendFile(path.join(__dirname, 'client', 'index.html'));
-})
+  res.send(dataServed.split('\n').join('<br>'));
+});
 
 const parseJSONToCSV = (obj) => {
   let headersArr = [];

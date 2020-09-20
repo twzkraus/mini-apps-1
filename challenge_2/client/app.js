@@ -31,6 +31,14 @@ $submit.click((e) => {
     },
     success: (data) => {
       $displaybox.html(data);
+      createDownloadLink();
     }
   });
 });
+
+// allow for file download
+let $downloadLink;
+const createDownloadLink = () => {
+  $downloadLink = $("<a href='/add_data'>Click Here to Download CSV</a>");
+  $downloadLink.appendTo($body);
+};
