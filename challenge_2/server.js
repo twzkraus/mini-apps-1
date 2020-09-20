@@ -1,12 +1,11 @@
 const express = require('express');
 const PORT = 3000;
-const bodyParser = require('body-parser');
 const path = require('path');
 let dataServed;
 
 const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extend: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extend: true }));
 app.use(express.static('./client'));
 
 app.listen(PORT, () => {
